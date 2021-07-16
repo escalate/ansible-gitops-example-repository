@@ -1,0 +1,1 @@
+- import_playbook: bootstrap_minimal.yml

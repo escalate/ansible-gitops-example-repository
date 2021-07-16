@@ -1,0 +1,35 @@
+- name: Set hostname
+  ansible.builtin.hostname:
+    name: "{{ common_hostname }}"
+
+- name: Set timezone
+  community.general.timezone:
+    name: "{{ common_timezone }}"
+
+- name: Install packages
+  ansible.builtin.apt:
+    name: "{{ common_install_packages }}"
+    state: present
+    update_cache: true
+
+- name: Remove packages
+  ansible.builtin.apt:
+    name: "{{ common_remove_packages }}"
+    state: absent
+    update_cache: true
+
+- name: Set PATH variable to crontab
+  ansible.builtin.cron:
+    name: PATH
+    user: root
+    env: true
+    job: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    state: present
+
+- name: Set SHELL variable to crontab
+  ansible.builtin.cron:
+    name: SHELL
+    user: root
+    env: true
+    job: /bin/bash
+    state: present

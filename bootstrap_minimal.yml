@@ -1,0 +1,9 @@
+- hosts: gitops
+  tasks:
+    - name: Create Ansible deployment cron job
+      ansible.builtin.cron:
+        name: Ansible deployment
+        minute: "*/10"
+        user: root
+        job: "ansible-pull --url=https://github.com/escalate/ansible-gitops-example-repository.git --directory=/etc/gitops --inventory=/etc/ansible/hosts --vault-password-file=/etc/ansible/.vault_pass.txt site.yml 2>&1 | logger --tag ansible-deployment"
+        cron_file: /mnt/usbdisk/etc/crontab

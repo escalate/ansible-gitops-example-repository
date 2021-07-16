@@ -1,0 +1,168 @@
+- hosts: gitops
+  tasks:
+    - name: Install parted package
+      ansible.builtin.apt:
+        name: parted
+        state: present
+        update_cache: true
+
+    - name: Get partition information of USB disk
+      community.general.parted:
+        device: /dev/sda
+        unit: MiB
+      register: sda_info
+
+    - name: Remove all partitions from disk
+      community.general.parted:
+        device: /dev/sda
+        number: "{{ item.num }}"
+        state: absent
+      loop: "{{ sda_info.partitions }}"
+
+    # Using fdisk because parted v3.2-25 performs on Debian Buster not idempotent
+    - name: Create partition on disk
+      ansible.builtin.shell:
+        cmd: echo -e "o\nn\np\n1\n81920\n\nw" | fdisk /dev/sda
+      changed_when: false
+
+    - name: Create ext4 filesystem on partition
+      community.general.filesystem:
+        fstype: ext4
+        dev: /dev/sda1
+        state: present
+        force: true
+
+    - name: Mount USB disk
+      ansible.posix.mount:
+        state: mounted
+        src: /dev/sda1
+        path: /mnt/usbdisk
+        fstype: ext4
+
+    - name: Get Raspberry Pi OS image archive
+      ansible.builtin.find:
+        paths: /var/tmp
+        patterns: "*.zip"
+      register: raspberry_pi_os_image_archive
+
+    - name: Unarchive Raspberry Pi OS image archive
+      ansible.builtin.unarchive:
+        src: "{{ raspberry_pi_os_image_archive.files[0].path }}"
+        dest: /var/tmp
+        remote_src: true
+
+    - name: Get Raspberry Pi OS image file
+      ansible.builtin.find:
+        paths: /var/tmp
+        patterns: "*.img"
+      register: raspberry_pi_os_image_file
+
+    - name: Set up loop device
+      ansible.builtin.command:
+        cmd: "losetup --show --find --read-only --partscan /var/tmp/{{ raspberry_pi_os_image_file.files[0].path | basename }}"
+      changed_when: false
+      register: loop_device
+
+    - name: Mount loop device
+      ansible.posix.mount:
+        state: mounted
+        src: "{{ loop_device.stdout }}p2"
+        path: /mnt/raspios
+        fstype: ext4
+
+    - name: Install sshpass package
+      ansible.builtin.apt:
+        name: sshpass
+        state: present
+        update_cache: true
+
+    - name: Copy root filesystem to USB disk
+      ansible.posix.synchronize:
+        src: /mnt/raspios/
+        dest: /mnt/usbdisk
+      delegate_to: "{{ inventory_hostname }}"
+      no_log: true
+
+    - name: Umount loop device
+      ansible.posix.mount:
+        state: absent
+        path: /mnt/raspios
+
+    - name: Detach all loop devices
+      ansible.builtin.command:
+        cmd: losetup --detach-all
+      changed_when: false
+
+    - name: Adopt current hostname
+      ansible.builtin.copy:
+        src: /etc/hostname
+        dest: /mnt/usbdisk/etc/hostname
+        remote_src: true
+
+    - name: Create Ansible installation cron job
+      ansible.builtin.cron:
+        name: Ansible installation
+        special_time: reboot
+        user: root
+        job: "sleep 60 && export $(cat /boot/gitops-bootstrap.env | xargs) && /boot/gitops-install-and-configure-ansible.sh 2>&1 | logger --tag ansible-installation"
+        cron_file: /mnt/usbdisk/etc/crontab
+
+    - name: Create Ansible deployment cron job
+      ansible.builtin.cron:
+        name: Ansible deployment
+        minute: "*/10"
+        user: root
+        job: "ansible-pull --url=https://github.com/escalate/ansible-gitops-example-repository.git --directory=/etc/gitops --inventory=/etc/ansible/hosts --vault-password-file=/etc/ansible/.vault_pass.txt site.yml 2>&1 | logger --tag ansible-deployment"
+        cron_file: /mnt/usbdisk/etc/crontab
+
+    - name: Regather facts
+      ansible.builtin.setup:
+        gather_subset: all
+
+    - name: Configure boot partition
+      ansible.posix.mount:
+        state: present
+        src: "UUID={{ ansible_facts.devices['mmcblk0'].partitions['mmcblk0p1'].uuid }}"
+        path: /boot
+        fstype: vfat
+        opts: defaults
+        dump: 0
+        passno: 2
+        fstab: /mnt/usbdisk/etc/fstab
+
+    - name: Configure root partition
+      ansible.posix.mount:
+        state: present
+        src: "UUID={{ ansible_facts.devices['sda'].partitions['sda1'].uuid }}"
+        path: /
+        fstype: ext4
+        opts: defaults,noatime
+        dump: 0
+        passno: 1
+        fstab: /mnt/usbdisk/etc/fstab
+
+    - name: Umount USB disk
+      ansible.posix.mount:
+        state: absent
+        path: /mnt/usbdisk
+
+    - name: Get PARTUUID of USB disk
+      ansible.builtin.command:
+        cmd: blkid /dev/sda1 --match-tag PARTUUID --output value
+      changed_when: false
+      register: usbdisk_partuuid
+
+    # Using PARTUUID of USB disk because with UUID the system does not boot
+    - name: Switch to USB disk root partition
+      ansible.builtin.replace:
+        path: /boot/cmdline.txt
+        regexp: "root=PARTUUID=[-a-z0-9]* "
+        replace: "root=PARTUUID={{ usbdisk_partuuid.stdout }} "
+
+    - name: Activate SSHD on boot
+      ansible.builtin.file:
+        path: /boot/ssh
+        state: touch
+        owner: root
+        group: root
+        mode: 0755
