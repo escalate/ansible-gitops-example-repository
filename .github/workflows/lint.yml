@@ -17,7 +17,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip3 install --disable-pip-version-check ansible editorconfig-checker molecule[lint]
+          pip3 install --disable-pip-version-check ansible ansible-lint editorconfig-checker molecule[lint]
 
       - name: Run linter
         run: |
