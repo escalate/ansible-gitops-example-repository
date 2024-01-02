@@ -17,7 +17,15 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip3 install --disable-pip-version-check ansible ansible-lint editorconfig-checker molecule[lint]
+          pip3 install --disable-pip-version-check \
+            ansible \
+            ansible-lint \
+            editorconfig-checker \
+            flake8 \
+            molecule \
+            molecule-plugins[docker] \
+            pytest-testinfra \
+            yamllint
 
       - name: Run linter
         run: |
