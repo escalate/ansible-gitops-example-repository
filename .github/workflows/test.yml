@@ -81,7 +81,7 @@ jobs:
       - name: Run shellcheck
         if: steps.check_shell.outputs.files_exists == 'true'
         run: |
-          find . -name "*.sh" -print0 | xargs -0 -I{} shellcheck --external-sources "{}"
+          find . -name "*.sh" -not -path "*/ansible_collections/*" -print0 | xargs -0 -I{} shellcheck --external-sources "{}"
 
   yaml:
     name: YAML
