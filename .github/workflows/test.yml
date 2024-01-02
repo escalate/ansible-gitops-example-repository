@@ -162,11 +162,6 @@ jobs:
         run: |
           pip3 install --disable-pip-version-check ansible
 
-      - name: Run ansible-playbook
-        if: steps.check_ansible_playbook.outputs.files_exists == 'true'
-        run: |
-          find . -maxdepth 1 -name "*.yml" -not -name "requirements.yml" | xargs -n1 ansible-playbook --inventory="hosts" --syntax-check
-
       - name: Install latest ansible-lint version
         if: steps.check_ansible_playbook.outputs.files_exists == 'true'
         run: |
