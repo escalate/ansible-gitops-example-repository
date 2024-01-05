@@ -52,7 +52,7 @@ jobs:
       - name: Run hadolint
         if: steps.check_dockerfile.outputs.files_exists == 'true'
         run: |
-          find . -name "Dockerfile*" -not -name "Dockerfile.j2" -print0 | xargs -0 -I{} hadolint "{}"
+          find . -name "Dockerfile*" -not -name "Dockerfile.j2" -not -path "*/ansible_collections/*" -print0 | xargs -0 -I{} hadolint "{}"
 
   shell:
     name: Shell
