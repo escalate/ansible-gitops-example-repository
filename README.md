@@ -1,4 +1,4 @@
-[![Lint](https://github.com/escalate/ansible-gitops-example-repository/actions/workflows/lint.yml/badge.svg?branch=master&event=push)](https://github.com/escalate/ansible-gitops-example-repository/actions/workflows/lint.yml)
+[![Tests](https://github.com/escalate/ansible-gitops-example-repository/actions/workflows/tests.yml/badge.svg?branch=master&event=push)](https://github.com/escalate/ansible-gitops-example-repository/actions/workflows/tests.yml)
 
 # Ansible GitOps - Example repository
 
