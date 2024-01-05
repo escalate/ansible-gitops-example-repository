@@ -172,8 +172,36 @@ jobs:
         run: |
           find . -maxdepth 1 -name "*.yml" -not -name "requirements.yml" | xargs -n1 ansible-lint --force-color
 
-  test:
-    name: Docker-Compose Test
+  tox:
+    name: Tox
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Check for Tox file
+        id: check_tox
+        uses: andstor/file-existence-action@v2
+        with:
+          files: "tox.ini"
+
+      - name: Install test dependencies
+        if: steps.check_tox.outputs.files_exists == 'true'
+        run: |
+          make dev-requirements
+
+      - name: Run tox
+        if: steps.check_tox.outputs.files_exists == 'true'
+        run: |
+          tox
+
+  docker-compose:
+    name: Docker-Compose
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
