@@ -1,10 +1,10 @@
 roles:
-  # https://galaxy.ansible.com/escalate/common
+  # https://galaxy.ansible.com/ui/standalone/roles/escalate/common/
   - name: common
     src: escalate.common
-    version: v1.6.0
+    version: v1.17.0
 
 collections:
-  # https://galaxy.ansible.com/community/general
+  # https://galaxy.ansible.com/ui/repo/published/community/general/
   - name: community.general
-    version: 3.3.2
+    version: 8.3.0
