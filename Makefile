@@ -15,13 +15,6 @@ ifdef ANSIBLE_TAGS
 ANSIBLE_ARGS := $(ANSIBLE_ARGS) --tags='$(ANSIBLE_TAGS)'
 endif
 
-.PHONY: version
-version:
-	ansible --version
-	ansible-lint --version
-	ec --version
-	yamllint --version
-
 .PHONY: roles
 roles:
 	rm --recursive --force ./roles/
@@ -36,15 +29,6 @@ collections:
 
 .PHONY: requirements
 requirements: roles collections
-
-.PHONY: lint
-lint:
-	ec
-	yamllint --strict --config-file .yamllint .
-	ansible-lint .
-ifndef CI
-	find . -maxdepth 1 -name "*.yml" -not -name "requirements.yml" | xargs -n1 ansible-playbook --inventory="hosts" --syntax-check
-endif
 
 .PHONY: bootstrap
 bootstrap:
