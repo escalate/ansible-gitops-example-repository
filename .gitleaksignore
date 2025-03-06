@@ -96,3 +96,7 @@
 56c1c3074349848b55ae09a4c91cc9eb37ad7c0a:collections/ansible_collections/community/general/tests/unit/plugins/modules/source_control/bitbucket/test_bitbucket_pipeline_known_host.py:generic-api-key:71
 56c1c3074349848b55ae09a4c91cc9eb37ad7c0a:collections/ansible_collections/community/general/tests/unit/plugins/modules/source_control/bitbucket/test_bitbucket_pipeline_known_host.py:generic-api-key:121
 56c1c3074349848b55ae09a4c91cc9eb37ad7c0a:collections/ansible_collections/community/general/tests/unit/plugins/modules/source_control/bitbucket/test_bitbucket_pipeline_known_host.py:generic-api-key:170
+56c1c3074349848b55ae09a4c91cc9eb37ad7c0a:collections/ansible_collections/community/general/plugins/callback/loganalytics.py:generic-api-key:44
+56c1c3074349848b55ae09a4c91cc9eb37ad7c0a:collections/ansible_collections/community/general/plugins/callback/loganalytics.py:generic-api-key:48
+56c1c3074349848b55ae09a4c91cc9eb37ad7c0a:collections/ansible_collections/community/general/tests/unit/plugins/callback/test_loganalytics.py:generic-api-key:35
+56c1c3074349848b55ae09a4c91cc9eb37ad7c0a:collections/ansible_collections/community/general/tests/unit/plugins/callback/test_loganalytics.py:generic-api-key:55
