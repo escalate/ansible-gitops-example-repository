@@ -1,6 +1,3 @@
 {
-    "Exclude": [
-        "collections",
-        "roles"
-    ]
+  "Exclude": ["collections", "roles"]
 }
