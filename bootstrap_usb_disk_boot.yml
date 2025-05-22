@@ -1,7 +1,7 @@
 - name: Bootstrap and switch to USB disk boot
   hosts: all
   vars:
-    gitops_repository: https://github.com/escalate/my-homelab.git
+    gitops_repository: https://github.com/escalate/ansible-gitops-example-repository.git
   tasks:
     - name: Install parted package
       ansible.builtin.apt:
