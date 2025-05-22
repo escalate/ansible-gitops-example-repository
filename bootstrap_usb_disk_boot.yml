@@ -1,5 +1,7 @@
 - name: Bootstrap and switch to USB disk boot
   hosts: all
+  vars:
+    gitops_repository: https://github.com/escalate/my-homelab.git
   tasks:
     - name: Install parted package
       ansible.builtin.apt:
@@ -116,7 +118,7 @@
         name: Ansible GitOps deployment
         minute: "*/10"
         user: root
-        job: "ansible-pull --url=https://github.com/escalate/ansible-gitops-example-repository.git --directory=/etc/gitops --inventory=/etc/ansible/hosts --only-if-changed --track-subs site.yml 2>&1 | logger --tag ansible-deployment"
+        job: "ansible-pull --url={{ gitops_repository }} --directory=/etc/gitops --inventory=/etc/ansible/hosts.yml --only-if-changed --track-subs site.yml 2>&1 | logger --tag ansible-deployment"
         cron_file: /mnt/usbdisk/etc/crontab
 
     - name: Regather facts
