@@ -8,5 +8,4 @@ jobs:
   test:
     name: Test
     uses: escalate/github-actions-workflows/.github/workflows/test.yml@master
-    secrets:
-      VAULT_PASS: ${{secrets.VAULT_PASS}}
+    secrets: inherit
