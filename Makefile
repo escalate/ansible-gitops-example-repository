@@ -17,15 +17,23 @@ endif
 
 .PHONY: roles
 roles:
-	rm --recursive --force ./roles/
-	ansible-galaxy role install \
-		--role-file="requirements.yml"
+	rm --recursive --force roles/
+	until ansible-galaxy role install \
+		--roles-path="roles/" \
+		--role-file="requirements.yml"; \
+	do \
+		echo "Download of Ansible roles failed. Try again"; \
+	done
 
 .PHONY: collections
 collections:
-	rm --recursive --force ./collections/
-	ansible-galaxy collection install \
-		--requirements-file="requirements.yml"
+	rm --recursive --force collections/
+	until ansible-galaxy collection install \
+		--collections-path="collections/" \
+		--requirements-file="requirements.yml"; \
+	do \
+		echo "Download of Ansible collections failed. Try again"; \
+	done
 
 .PHONY: requirements
 requirements: roles collections
@@ -34,7 +42,7 @@ requirements: roles collections
 bootstrap:
 	ansible-playbook \
 		$(ANSIBLE_ARGS) \
-		--inventory="hosts" \
+		--inventory="hosts.yml" \
 		--limit="$(ANSIBLE_LIMIT)" \
 		bootstrap.yml
 
@@ -42,6 +50,6 @@ bootstrap:
 deploy:
 	ansible-playbook \
 		$(ANSIBLE_ARGS) \
-		--inventory="hosts" \
+		--inventory="hosts.yml" \
 		--limit="$(ANSIBLE_LIMIT)" \
 		$(ANSIBLE_PLAYBOOK)

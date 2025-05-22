@@ -1,4 +1,5 @@
-- hosts: gitops
+- name: Test System
+  hosts: all
   roles:
     - role: common
       tags: common

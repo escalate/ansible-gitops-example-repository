@@ -1,9 +1,10 @@
-- hosts: gitops
+- name: Bootstrap Minimal
+  hosts: all
   tasks:
     - name: Create Ansible deployment cron job
       ansible.builtin.cron:
-        name: Ansible deployment
+        name: Ansible GitOps deployment
         minute: "*/10"
         user: root
-        job: "ansible-pull --url=https://github.com/escalate/ansible-gitops-example-repository.git --directory=/etc/gitops --inventory=/etc/ansible/hosts site.yml 2>&1 | logger --tag ansible-deployment"
+        job: "ansible-pull --url=https://github.com/escalate/ansible-gitops-example-repository.git --directory=/etc/gitops --inventory=/etc/ansible/hosts.yml --only-if-changed --track-subs site.yml 2>&1 | logger --tag ansible-deployment"
         cron_file: /mnt/usbdisk/etc/crontab
