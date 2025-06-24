@@ -4,21 +4,27 @@
 
 A example repository to demonstrate Ansible GitOps workflow for Raspberry Pi.
 
-## Pepare Raspberry Pi
-
-Create Disk Image
-
-Flash Disk Image on SD Card
-
-## Bootstrap
-
 ## How to start
 
-### Vault secret festlegen
+### Set a secret for Ansible Vault
 
 ```
 echo "Secr3t" > .vault_pass.txt
 ```
+
+## Choose a bootstrap option
+
+### Minimal
+
+### USB-Disk boot
+
+## Pepare Raspberry Pi
+
+Create a [customized Raspberry disk image](https://github.com/escalate/ansible-gitops-raspberry-pi-os-custom-disk-image) and flash it to an SD card.
+
+
+
+
 
 ## License
 
