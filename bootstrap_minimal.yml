@@ -1,0 +1,10 @@
+- name: Bootstrap Minimal
+  hosts: all
+  tasks:
+    - name: Create Ansible GitOps rollout cron job
+      ansible.builtin.cron:
+        name: Ansible GitOps rollout
+        minute: "*/10"
+        user: root
+        job: flock --nonblock /var/lock/gitops-rollout.lock /usr/local/bin/gitops-rollout.sh
+        cron_file: /etc/crontab

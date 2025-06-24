@@ -1,0 +1,7 @@
+*.retry
+*.swp
+.ansible/
+.vault_pass.txt
+.vscode/
+collections/
+roles/

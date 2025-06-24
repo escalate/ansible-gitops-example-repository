@@ -1,0 +1,2 @@
+common_hostname: testserver.fritz.box
+common_secret_example: "{{ vault_common_secret_example }}"

@@ -1,0 +1,2 @@
+- name: Import Test System
+  ansible.builtin.import_playbook: test_system.yml

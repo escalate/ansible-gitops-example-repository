@@ -1,0 +1,2 @@
+- name: Import Bootstrap Minimal
+  ansible.builtin.import_playbook: bootstrap_minimal.yml
