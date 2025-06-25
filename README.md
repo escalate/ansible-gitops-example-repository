@@ -22,10 +22,6 @@ echo "Secr3t" > .vault_pass.txt
 
 Create a [customized Raspberry disk image](https://github.com/escalate/ansible-gitops-raspberry-pi-os-custom-disk-image) and flash it to an SD card.
 
-
-
-
-
 ## License
 
 MIT
